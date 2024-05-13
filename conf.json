@@ -1,0 +1,10 @@
+{
+  "DISPLAY": 1,
+  "Show_op_hand": 1,
+  "Show_my_hand": 1,
+  "op_deck_type": "cdruid",
+  "my_deck_type": "cdruid",
+  "op_ai_type": "auto",
+  "my_ai_type": "auto",
+  "print_text": 1
+}
