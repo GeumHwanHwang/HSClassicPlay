@@ -51,7 +51,8 @@ curmana = [0, 0]
 hp = [30, 30]
 playlog = []
 heropower = False
-
+if DISPLAY:
+    pygame.init()
 
 def game(depth0=10000, depth1=10000):
     global fieldcardstat
@@ -69,85 +70,96 @@ def game(depth0=10000, depth1=10000):
     hp = [30, 30]
 
 
-
-    def gamedisplay():
-        pygame.init()
-
-        font = pygame.font.SysFont(None, 60)
-        font2 = pygame.font.SysFont(None, 40)
-        Hero = pygame.image.load('./image/Hero.png')
-        Hero = pygame.transform.scale(Hero, (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
-
-        screen.fill((255, 255, 255))
-        if myturn == 1:
-            pygame.draw.rect(screen, (255, 255, 127), [0, 0, 1920, 480])
-        elif myturn == 0:
-            pygame.draw.rect(screen, (255, 255, 127), [0, 480, 1920, 480])
-        screen.blit(Hero, (100, 0))
-        screen.blit(Hero, (100, 701))
-        pygame.draw.rect(screen, (255, 0, 0), [250, 179, 60, 60])
-        pygame.draw.rect(screen, (255, 0, 0), [250, 880, 60, 60])
-        pygame.draw.rect(screen, (0, 0, 255), [100, 20, 100, 40])
-        pygame.draw.rect(screen, (0, 0, 255), [100, 721, 100, 40])
-        text = font.render(str(hp[1]), True, (255, 255, 255))
-        screen.blit(text, (255, 189))
-        text = font.render(str(hp[0]), True, (255, 255, 255))
-        screen.blit(text, (255, 890))
-        text = font2.render(str(cmana[1]) + ' / ' + str(maxmana[1]), True, (255, 255, 255))
-        screen.blit(text, (110, 27))
-        text = font2.render(str(cmana[0]) + ' / ' + str(maxmana[0]), True, (255, 255, 255))
-        screen.blit(text, (110, 728))
-        text = font.render("Turn: " + str(turn), True, (0, 0, 0))
-        screen.blit(text, (1620, 10))
-        for i in range(len(handcard)):
-            for j in range(len(handcard[i])):
-                card = pygame.image.load('./image/' + handcard[i][j].name + '.webp')
-                card = pygame.transform.scale(card,
-                                              (int(Hero.get_rect().size[0] * 0.8), int(Hero.get_rect().size[1] * 0.8)))
-                screen.blit(card, (350 + 150 * j, 20 + 700 * (1 - i)))
-        for i in range(len(fieldcard)):
-            for j in range(len(fieldcard[i])):
-                if fieldcardstat[i][j][3] == "Taunt":
-                    pygame.draw.rect(screen, (127, 127, 127), [40 + 180 * j, 255 + 230 * (1 - i), 155, 225])
-                if fieldcardstat[i][j][3] == "Silence":
-                    pygame.draw.rect(screen, (255, 127, 127), [40 + 180 * j, 255 + 230 * (1 - i), 155, 225])
-
-                card = pygame.image.load('./image/' + fieldcard[i][j].name + '.webp')
-                card = pygame.transform.scale(card,
-                                              (int(Hero.get_rect().size[0] * 1), int(Hero.get_rect().size[1] * 1)))
-                screen.blit(card, (20 + 180 * j, 230 + 230 * (1 - i)))
-                pygame.draw.rect(screen, (127, 127, 0), [40 + 180 * j, 440 + 230 * (1 - i), 40, 40])
-                pygame.draw.rect(screen, (255, 0, 0), [155 + 180 * j, 440 + 230 * (1 - i), 40, 40])
-                text = font2.render(str(fieldcardstat[i][j][0]), True, (255, 255, 255))
-                screen.blit(text, (50 + 180 * j, 445 + 230 * (1 - i)))
-                text = font2.render(str(fieldcardstat[i][j][1]), True, (255, 255, 255))
-                screen.blit(text, (165 + 180 * j, 445 + 230 * (1 - i)))
-            card = pygame.image.load('./image/Card.webp')
-            card = pygame.transform.scale(card,
-                                          (int(Hero.get_rect().size[0] * 0.8), int(Hero.get_rect().size[1] * 0.8)))
-            screen.blit(card, (1280, 260 + 230 * (1 - i)))
-            text = font2.render(str(len(deckcard[i])), True, (255, 255, 255))
-            screen.blit(text, (1340, 350 + 230 * (1 - i)))
-
-        pygame.draw.rect(screen, (168, 168, 168), [1820, 0, 100, 960])
-        text = font2.render("Log", True, (0, 0, 0))
-        screen.blit(text, (1840, 0))
-        for i in range(len(playlog)):
-            card = pygame.image.load('./image/' + playlog[i].name + '.webp')
-            card = pygame.transform.scale(card,
-                                          (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
-            screen.blit(card, (1820, 20 + 120 * i))
-        if heropower == True:
-            card = pygame.image.load('./image/Hero Power_Druid.webp')
-            card = pygame.transform.scale(card,
-                                          (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
-            screen.blit(card, (1820, 20 + 120 * len(playlog)))
-        pygame.draw.rect(screen, (64, 255, 64), [1450, 450, 190, 50])
-        text = font.render("Turn End", True, (0, 0, 0))
-        screen.blit(text, (1455, 455))
-
+    def updatescreen():
+        pygame.display.update()
+        click = False
+        while not click:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    click = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        click = True
+        screen.blit(text, (1620, 920))
         pygame.display.update()
 
+    def gamedisplay():
+            #print("DISPLAY_START")
+            screen.fill((255, 255, 255))
+            font = pygame.font.SysFont(None, 60)
+            font2 = pygame.font.SysFont(None, 40)
+            Hero = pygame.image.load('./image/Hero.png')
+            Hero = pygame.transform.scale(Hero, (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
+
+            screen.fill((255, 255, 255))
+            if myturn == 1:
+                pygame.draw.rect(screen, (255, 255, 127), [0, 0, 1920, 480])
+            elif myturn == 0:
+                pygame.draw.rect(screen, (255, 255, 127), [0, 480, 1920, 480])
+            screen.blit(Hero, (100, 0))
+            screen.blit(Hero, (100, 701))
+            pygame.draw.rect(screen, (255, 0, 0), [250, 179, 60, 60])
+            pygame.draw.rect(screen, (255, 0, 0), [250, 880, 60, 60])
+            pygame.draw.rect(screen, (0, 0, 255), [100, 20, 100, 40])
+            pygame.draw.rect(screen, (0, 0, 255), [100, 721, 100, 40])
+            text = font.render(str(hp[1]), True, (255, 255, 255))
+            screen.blit(text, (255, 189))
+            text = font.render(str(hp[0]), True, (255, 255, 255))
+            screen.blit(text, (255, 890))
+            text = font2.render(str(cmana[1]) + ' / ' + str(maxmana[1]), True, (255, 255, 255))
+            screen.blit(text, (110, 27))
+            text = font2.render(str(cmana[0]) + ' / ' + str(maxmana[0]), True, (255, 255, 255))
+            screen.blit(text, (110, 728))
+            text = font.render("Turn: " + str(turn), True, (0, 0, 0))
+            screen.blit(text, (1620, 10))
+            for i in range(len(handcard)):
+                for j in range(len(handcard[i])):
+                    card = pygame.image.load('./image/' + handcard[i][j].name + '.webp')
+                    card = pygame.transform.scale(card,
+                                                  (int(Hero.get_rect().size[0] * 0.8), int(Hero.get_rect().size[1] * 0.8)))
+                    screen.blit(card, (350 + 150 * j, 20 + 700 * (1 - i)))
+            for i in range(len(fieldcard)):
+                for j in range(len(fieldcard[i])):
+                    if fieldcardstat[i][j][3] == "Taunt":
+                        pygame.draw.rect(screen, (127, 127, 127), [40 + 180 * j, 255 + 230 * (1 - i), 155, 225])
+                    if fieldcardstat[i][j][3] == "Silence":
+                        pygame.draw.rect(screen, (255, 127, 127), [40 + 180 * j, 255 + 230 * (1 - i), 155, 225])
+
+                    card = pygame.image.load('./image/' + fieldcard[i][j].name + '.webp')
+                    card = pygame.transform.scale(card,(int(Hero.get_rect().size[0] * 1), int(Hero.get_rect().size[1] * 1)))
+                    screen.blit(card, (20 + 180 * j, 230 + 230 * (1 - i)))
+                    pygame.draw.rect(screen, (127, 127, 0), [40 + 180 * j, 440 + 230 * (1 - i), 40, 40])
+                    pygame.draw.rect(screen, (255, 0, 0), [155 + 180 * j, 440 + 230 * (1 - i), 40, 40])
+                    text = font2.render(str(fieldcardstat[i][j][0]), True, (255, 255, 255))
+                    screen.blit(text, (50 + 180 * j, 445 + 230 * (1 - i)))
+                    text = font2.render(str(fieldcardstat[i][j][1]), True, (255, 255, 255))
+                    screen.blit(text, (165 + 180 * j, 445 + 230 * (1 - i)))
+                card = pygame.image.load('./image/Card.webp')
+                card = pygame.transform.scale(card,
+                                              (int(Hero.get_rect().size[0] * 0.8), int(Hero.get_rect().size[1] * 0.8)))
+                screen.blit(card, (1280, 260 + 230 * (1 - i)))
+                text = font2.render(str(len(deckcard[i])), True, (255, 255, 255))
+                screen.blit(text, (1340, 350 + 230 * (1 - i)))
+
+            pygame.draw.rect(screen, (168, 168, 168), [1820, 0, 100, 960])
+            #text = font2.render("Log", True, (0, 0, 0))
+            #screen.blit(text, (1840, 0))
+            #for i in range(len(playlog)):
+            #    card = pygame.image.load('./image/' + playlog[i].name + '.webp')
+            #    card = pygame.transform.scale(card,
+            #                                  (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
+            #    screen.blit(card, (1820, 20 + 120 * i))
+            if heropower == True:
+                card = pygame.image.load('./image/Hero Power_Druid.webp')
+                card = pygame.transform.scale(card,
+                                              (int(Hero.get_rect().size[0] * 0.5), int(Hero.get_rect().size[1] * 0.5)))
+                screen.blit(card, (1820, 20 + 120 * len(playlog)))
+            pygame.draw.rect(screen, (64, 255, 64), [1450, 450, 190, 50])
+            text = font.render("Turn End", True, (0, 0, 0))
+            screen.blit(text, (1455, 455))
+
+            pygame.display.update()
+            #print("DISPLAY_END")
 
 
     def printfield():
@@ -163,6 +175,42 @@ def game(depth0=10000, depth1=10000):
         print()
         print('--------------------------')
 
+
+    def printtext(me):
+        op=1-me
+        print(hp[op], end=", ")
+        print(str(maxmana[op]) + "/" + str(cmana[op]), end=", ")
+        print(len(deckcard[op]))
+        for i in range(len(handcard[op])):
+            if conf["Show_op_hand"] == True:
+                print(handcard[op][i].name, end="//")
+            else:
+                print("_", end="")
+        print("")
+        for i in range(len(fieldcard[op])):
+            print(fieldcard[op][i].name, end = "(")
+            print(fieldcardstat[op][i][0], end = ", ")
+            print(fieldcardstat[op][i][1], end = ", ")
+            print(fieldcardstat[op][i][2], end = ", ")
+            print(fieldcardstat[op][i][3], end = ")//")
+        print("")
+        print("-----")
+        for i in range(len(fieldcard[me])):
+            print(fieldcard[me][i].name, end= "(")
+            print(fieldcardstat[me][i][0], end= ", ")
+            print(fieldcardstat[me][i][1], end= ", ")
+            print(fieldcardstat[me][i][2], end= ", ")
+            print(fieldcardstat[me][i][3], end = ")//")
+        print("")
+        for i in range(len(handcard[me])):
+            if conf["Show_my_hand"] == True:
+                print(handcard[me][i].name, end="//")
+            else:
+                print("_", end="//")
+        print("")
+        print(hp[me], end=", ")
+        print(str(maxmana[me]) + "/" + str(cmana[me]), end=", ")
+        print(len(deckcard[me]))
 
 
     class autoDruid:
@@ -513,19 +561,6 @@ def game(depth0=10000, depth1=10000):
             if maxmana[self.me] < 10:
                 maxmana[self.me] += 1
             cmana[self.me] = maxmana[self.me]
-            if DISPLAY:
-                gamedisplay()
-                click = False
-                while not click:
-                    for event in pygame.event.get():
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            click = True
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
-                                click = True
-                text = font.render("Loading...", True, (0, 0, 0))
-                screen.blit(text, (1620, 920))
-                pygame.display.update()
             if self.maxatk() >= hp[self.op]:
                 if self.cardinopfield("Sen'jin Shieldmasta") == 0 and self.cardinopfield(
                         "Druid of the Chaw") == 0 and self.cardinopfield("Ancient of War") == 0:
@@ -907,7 +942,7 @@ def game(depth0=10000, depth1=10000):
             for ID, num in deckcards[deck1]:
                 decklist.add_card(ID, num)
             deck[self.me] = decklist.cards()
-            curmana = 0
+            cmana[self.me] = 0
             spellatk = 0
             exhaution = 0
             heroatktemp = False
@@ -946,8 +981,8 @@ def game(depth0=10000, depth1=10000):
         def mulligun(self, first):
             if DISPLAY:
                 gamedisplay()
-            str=input("mulligun:")
-            arr=str.split(" ")
+            com=input("mulligun:")
+            arr=com.split(" ")
             arr = [int(i) for i in arr]
             arr.sort()
             if (self.me == first and arr[-1]>2) or (self.me != first and arr[-1]>3):
@@ -958,6 +993,10 @@ def game(depth0=10000, depth1=10000):
                 deckcard[self.me].append(handcard[self.me].pop(cardnum))
                 self.draw()
             self.shuffle()
+            if self.me != first:
+                handcard[self.me].append(pyRosetta.Cards.find_card_by_id('GAME_005'))  # add The Coin
+            if DISPLAY:
+                gamedisplay()
 
         def myturn(self,DEPTH=0):
             global fieldcardstat
@@ -974,13 +1013,14 @@ def game(depth0=10000, depth1=10000):
             heroatk = 0
             self.heroatktemp=False
             self.spellatk=0
+            cmana[self.me] = maxmana[self.me]
             for i in range(len(fieldcard[self.me])) :
                 if fieldcard[self.me][i].name == "Azure Drake" and fieldcardstat[self.me][i][3] != "Silence":
                     self.spellatk += 1
             for mobstat in fieldcardstat[self.me]:
                 mobstat[2] = True
 
-            def dead(target):
+            def dead(target, temptarget=-1):
                 deadcard = fieldcard[self.me].pop(target)
                 deadcardstat = fieldcardstat[self.me].pop(target)
                 if deadcard.name == "Cairne Bloodhoof" and deadcardstat[3] != "Silence":
@@ -991,17 +1031,23 @@ def game(depth0=10000, depth1=10000):
                     fieldcard[self.me].append(pyRosetta.Cards.find_card_by_id("VAN_CS2_168"))
                     fieldcard[self.me][-1].name = "Damaged Golem"
                     fieldcardstat[self.me].append([2, 1, False, None])
-                elif deadcard.name == "Sylvanas Windrunner":
-                    if len(fieldcard[self.op]) != 0 and deadcardstat[3] != "Silence":
-                        temp = random.randrange(len(fieldcard[self.op]))
-                        fieldcard[self.me].append(fieldcard[self.op].pop(temp))
-                        fieldcardstat[self.me].append(fieldcardstat[self.op].pop(temp))
                 elif deadcard.name == "Azure Drake" and deadcardstat[3] != "Silence":
                     self.spellatk -= 1
+                elif deadcard.name == "Sylvanas Windrunner":
+                    if len(fieldcard[self.op]) != 0 and deadcardstat[3] != "Silence":
+                        if len(fieldcard[self.op]) == 1 and temptarget == 0 and fieldcardstat[self.op][temptarget][1] <= 0:
+                            return
+                        for i in range(1000):
+                            temp = random.randrange(len(fieldcard[self.me]))
+                            if fieldcard[self.op][temp][1] > 0:
+                                fieldcard[self.me].append(fieldcard[self.op].pop(temp))
+                                fieldcardstat[self.me].append(fieldcardstat[self.op].pop(temp))
+                                break
+                        print("ERROR_SYLVANAS")
 
-            def kill(target):
+            def kill(target, temptarget=-1):
                 deadcard = fieldcard[self.op].pop(target)
-                fieldcardstat[self.op].pop(target)
+                deadcardstat = fieldcardstat[self.op].pop(target)
                 if deadcard.name == "Cairne Bloodhoof":
                     fieldcard[self.op].append(pyRosetta.Cards.find_card_by_id("VAN_EX1_110t"))
                     fieldcard[self.op][-1].name = "Baine Bloodhoof"
@@ -1011,19 +1057,28 @@ def game(depth0=10000, depth1=10000):
                     fieldcard[self.op][-1].name = "Damaged Golem"
                     fieldcardstat[self.op].append([2, 1, False, None])
                 elif deadcard.name == "Sylvanas Windrunner":
-                    if len(fieldcard[self.me]) != 0:
-                        temp = random.randrange(len(fieldcard[self.me]))
-                        fieldcard[self.op].append(fieldcard[self.me].pop(temp))
-                        fieldcardstat[self.op].append(fieldcardstat[self.me].pop(temp))
+                    if len(fieldcard[self.me]) != 0 and deadcardstat[3] != "Silence":
+                        if len(fieldcard[self.me])==1 and temptarget==0 and fieldcardstat[self.me][temptarget][1]<=0:
+                                return
+                        for i in range(1000):
+                            temp = random.randrange(len(fieldcard[self.me]))
+                            if fieldcard[self.me][temp][1]>0:
+                                fieldcard[self.op].append(fieldcard[self.me].pop(temp))
+                                fieldcardstat[self.op].append(fieldcardstat[self.me].pop(temp))
+                                break
+                        print("ERROR_SYLVANAS")
 
             def cardplay(self, cardnum, target=-2, choose=-1, temp=0):
                 playcard = handcard[self.me][cardnum]
-                if playcard.game_tags[pyRosetta.GameTag.COST] > cmana[self.me]:
-                    print("less mana!")
-                    return -1  # 마나 부족!
                 cmana[self.me] -= playcard.game_tags[pyRosetta.GameTag.COST]
+                if cmana[self.me]<0:
+                    print("less mana!")
+                    cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
+                    return -1  # 마나 부족!
                 if playcard.name == "Innervate":
                     cmana[self.me] = min(10, cmana[self.me] + 2)
+                elif playcard.name == "The Coin":
+                    cmana[self.me] = min(10, cmana[self.me] + 1)
                 elif playcard.name == "Wild Growth":
                     if maxmana[self.me] < 10:
                         maxmana[self.me] += 1
@@ -1032,6 +1087,7 @@ def game(depth0=10000, depth1=10000):
                 elif playcard.name == "Wrath":
                     if target == -2 or target == -1 or choose == -1:
                         print("not valid target!")
+                        cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                         return -1
                     else:
                         if choose == 0:
@@ -1060,6 +1116,7 @@ def game(depth0=10000, depth1=10000):
                 elif playcard.name == "Swipe":
                     if target == -2:
                         print("not valid target!")
+                        cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                         return -1
                     if target == -1:
                         hp[self.op] -= 4 + self.spellatk
@@ -1070,6 +1127,7 @@ def game(depth0=10000, depth1=10000):
                             fieldcardstat[self.op][i][1] -= 4 + self.spellatk
                         else:
                             fieldcardstat[self.op][i][1] -= 1 + self.spellatk
+                    for i in range(len(fieldcard[self.op])-1,-1,-1):
                         if fieldcardstat[self.op][i][1] <= 0:
                             kill(target)
                 elif playcard.name == "Force of Nature":
@@ -1084,6 +1142,7 @@ def game(depth0=10000, depth1=10000):
                 else:  # 나머지는 모두 몬스터 1체 소환
                     if len(fieldcard[self.me]) >= 7:
                         print("no space in field!")
+                        cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                         return -1
                     else:
                         fieldcard[self.me].append(playcard)
@@ -1110,6 +1169,7 @@ def game(depth0=10000, depth1=10000):
                             if choose == 1:
                                 if target == -1:
                                     print("invalid target!")
+                                    cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                                     return -1
                                 elif temp == 0:
                                     fieldcardstat[self.op][target][3] = "Silence"
@@ -1142,6 +1202,7 @@ def game(depth0=10000, depth1=10000):
                                 print("invalid choose!")
                                 fieldcard[self.me].pop(-1)
                                 fieldcardstat[self.me].pop(-1)
+                                cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                                 return -1
 
                         elif playcard.name == "Ancient of War":
@@ -1154,6 +1215,7 @@ def game(depth0=10000, depth1=10000):
                                 print("invalid choose!")
                                 fieldcard[self.me].pop(-1)
                                 fieldcardstat[self.me].pop(-1)
+                                cmana[self.me] += playcard.game_tags[pyRosetta.GameTag.COST]
                                 return -1
                 handcard[self.me].pop(cardnum)
                 playlog.append(playcard)
@@ -1184,43 +1246,16 @@ def game(depth0=10000, depth1=10000):
                         fieldcardstat[self.op][target][1] -= fieldcardstat[self.me][cardnum][0]
                         fieldcardstat[self.me][cardnum][1] -= fieldcardstat[self.op][target][0]
                         fieldcardstat[self.me][cardnum][2] = False
+
                         if fieldcardstat[self.me][cardnum][1]<=0:
-                            dead(cardnum)
-                        if fieldcardstat[self.op][target][1]<=0:
-                            kill(target)
-
-            def printtext():
-                print(hp[self.op], end=", ")
-                print(maxmana[self.op] + "/" + curmana[self.op], end=", ")
-                print(len(deckcard[self.op]))
-                for i in len(range(handcard[self.op])):
-                    if conf["Show_op_hand"]==True:
-                        print (handcard[self.op][i].name, end="//")
-                    else:
-                        print ("_", end="")
-                print("")
-                for i in len(range(fieldcard[self.op])):
-                    text=fieldcard[self.op][i].name+"("+str(fieldcardstat[self.op][i][0])+", "+str(fieldcardstat[self.op][i][1])+", "+str(fieldcardstat[self.op][i][2])+", "+fieldcardstat[self.op][i][3]+")"
-                    print(text, end="//")
-                print("")
-                print("-----")
-                for i in len(range(fieldcard[self.me])):
-                    text=fieldcard[self.me][i].name+"("+str(fieldcardstat[self.me][i][0])+", "+str(fieldcardstat[self.me][i][1])+", "+str(fieldcardstat[self.me][i][2])+", "+fieldcardstat[self.me][i][3]+")"
-                    print(text, end="//")
-                print("")
-                for i in len(range(handcard[self.me])):
-                    if conf["Show_my_hand"]==True:
-                        print (handcard[self.me][i].name, end="//")
-                    else:
-                        print ("_", end="//")
-                print("")
-                print(hp[self.me], end=", ")
-                print(maxmana[self.me] + "/" + curmana[self.me], end=", ")
-                print(len(deckcard[self.me]))
+                            dead(cardnum,target)
+                        for i in range(len(fieldcardstat[self.op])-1,-1,-1):
+                            if fieldcardstat[self.op][i][1]<=0:
+                                kill(i)
 
 
 
-
+            print("MyTurn_Start")
             # 지금 있는 모든 몬스터는 공격 가능
             for mobstat in fieldcardstat[self.me]:
                 mobstat[2] = True
@@ -1235,11 +1270,14 @@ def game(depth0=10000, depth1=10000):
                 pygame.display.update()
 
             while True:
-                str=input("play: ")
-                command=str.split(" ")
+                printtext(self.me)
+
+                com=input("play: ")
+                command=com.split(" ")
                 if len(command)>1:
                     command = [command[0]] + [int(i) for i in command[1:]]
-                if command[0]=="play":#카드번호, (타겟), (선택), (아군or 적군 선택)
+
+                if command[0]=="play":#카드번호, (타겟), (선택), (적군 or 아군 선택)
                     if len(command)==1:
                         print("play (number of card in hand) (target) (choose) (choosing opponent or our)")
                     elif len(command)==2:
@@ -1256,7 +1294,7 @@ def game(depth0=10000, depth1=10000):
                     if len(command)==1:
                         print("attack (my card) (target card)")
                     elif len(command)==3:
-                        attack(self, command[1],command[2])
+                        attack(self, command[1],command[2]) 
                     else:
                         print("invalid command")
                 elif command[0]=="heropower" or command[0]=="power" or command[0]=="ab":
@@ -1280,7 +1318,8 @@ def game(depth0=10000, depth1=10000):
                     gamedisplay()
                     text = font.render("Your turn", True, (0, 0, 0))
                     screen.blit(text, (1620, 920))
-                    pygame.display.update()
+                    updatescreen()
+
 
 
             for i in range(len(fieldcard[self.me])):
@@ -1288,6 +1327,8 @@ def game(depth0=10000, depth1=10000):
             for i in range(len(fieldcardstat[self.me]) - 1, -1, -1):
                 if fieldcardstat[self.me][i][3] == "treant":
                     dead(i)
+
+            print("MyTurn_end")
             return -1
 
 
@@ -1308,48 +1349,15 @@ def game(depth0=10000, depth1=10000):
         gamedisplay()
         text = font.render("Click to Start", True, (0, 0, 0))
         screen.blit(text, (1500, 820))
-        pygame.display.update()
-        click = False
-        while not click:
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    click = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        click = True
-        text = font.render("Loading...", True, (0, 0, 0))
-        screen.blit(text, (1620, 920))
-        pygame.display.update()
+        updatescreen()
     p0.newgame(first)
     p1.newgame(first)
     if DISPLAY:
-        gamedisplay()
-        click = False
-        while not click:
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    click = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        click = True
-        text = font.render("Loading...", True, (0, 0, 0))
-        screen.blit(text, (1620, 920))
-        pygame.display.update()
+        updatescreen()
     p0.mulligun(first)
     p1.mulligun(first)
     if DISPLAY:
-        gamedisplay()
-        click = False
-        while not click:
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    click = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        click = True
-        text = font.render("Loading...", True, (0, 0, 0))
-        screen.blit(text, (1620, 920))
-        pygame.display.update()
+        updatescreen()
     winner = -1
 
     while True:
@@ -1360,14 +1368,16 @@ def game(depth0=10000, depth1=10000):
             if winner != -1:
                 break
             # printfield()
-            gamedisplay()
+            if DISPLAY:
+                updatescreen()
             myturn = 1
             turn += 1
             winner = p1.myturn(DEPTH=depth1)
             if winner != -1:
                 break
             # printfield()
-            gamedisplay()
+            if DISPLAY:
+                updatescreen()
         else:
             myturn = 1
             turn += 1
@@ -1375,14 +1385,16 @@ def game(depth0=10000, depth1=10000):
             if winner != -1:
                 break
             # printfield()
-            gamedisplay()
+            if DISPLAY:
+                updatescreen()
             myturn = 0
             turn += 1
             winner = p0.myturn(DEPTH=depth0)
             if winner != -1:
                 break
             # printfield()
-            gamedisplay()
+            if DISPLAY:
+                updatescreen()
 
     if DISPLAY:
         gamedisplay()
@@ -1393,16 +1405,7 @@ def game(depth0=10000, depth1=10000):
         else:
             text = font3.render("winner: " + str(winner), True, (255, 255, 255))
         screen.blit(text, (620, 400))
-        pygame.display.update()
-        click = False
-        while not click:
-            for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    click = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        click = True
-        pygame.display.update()
+        updatescreen()
 
     return winner
 
@@ -1415,11 +1418,12 @@ if DISPLAY:
     # main = pygame.transform.scale(main, (1920, 960))
     # screen.blit(main, (0, 0))
     font = pygame.font.SysFont(None, 60)
-    text = font.render("Loading...", True, (0, 0, 0))
+    text = font.render("Loading...", True, (255, 255, 255))
     screen.blit(text, (1620, 920))
     pygame.display.update()
 
-game(depth0=0, depth1=10000)
+winner = game(depth0=0, depth1=10000)
+print("winner: " + str(winner))
 if DISPLAY:
     pygame.quit()
 
