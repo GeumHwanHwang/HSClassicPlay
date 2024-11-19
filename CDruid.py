@@ -180,7 +180,8 @@ def game(depth0=10000, depth1=10000):
         op=1-me
         print(hp[op], end=", ")
         print(str(maxmana[op]) + "/" + str(cmana[op]), end=", ")
-        print(len(deckcard[op]))
+        print(len(deckcard[op]), end=", ")
+        print(len(handcard[op]))
         for i in range(len(handcard[op])):
             if conf["Show_op_hand"] == True:
                 print(handcard[op][i].name, end="//")
@@ -195,6 +196,16 @@ def game(depth0=10000, depth1=10000):
             print(fieldcardstat[op][i][3], end = ")//")
         print("")
         print("-----")
+        print(hp[me], end=", ")
+        print(str(maxmana[me]) + "/" + str(cmana[me]), end=", ")
+        print(len(deckcard[me]), end=", ")
+        print(len(handcard[op]))
+        for i in range(len(handcard[me])):
+            if conf["Show_my_hand"] == True:
+                print(handcard[me][i].name, end="//")
+            else:
+                print("_", end="//")
+        print("")
         for i in range(len(fieldcard[me])):
             print(fieldcard[me][i].name, end= "(")
             print(fieldcardstat[me][i][0], end= ", ")
@@ -202,15 +213,7 @@ def game(depth0=10000, depth1=10000):
             print(fieldcardstat[me][i][2], end= ", ")
             print(fieldcardstat[me][i][3], end = ")//")
         print("")
-        for i in range(len(handcard[me])):
-            if conf["Show_my_hand"] == True:
-                print(handcard[me][i].name, end="//")
-            else:
-                print("_", end="//")
-        print("")
-        print(hp[me], end=", ")
-        print(str(maxmana[me]) + "/" + str(cmana[me]), end=", ")
-        print(len(deckcard[me]))
+
 
 
     class autoDruid:
@@ -981,6 +984,12 @@ def game(depth0=10000, depth1=10000):
         def mulligun(self, first):
             if DISPLAY:
                 gamedisplay()
+            for i in range(len(handcard[self.me])):
+                if conf["Show_my_hand"] == True:
+                    print(handcard[self.me][i].name, end="//")
+                else:
+                    print("_", end="//")
+            print("")
             com=input("mulligun:")
             arr=com.split(" ")
             arr = [int(i) for i in arr]
@@ -1108,7 +1117,7 @@ def game(depth0=10000, depth1=10000):
                                 fieldcardstat[self.me][target][1] -= 1 + self.spellatk
                                 if fieldcardstat[self.me][target][1] <= 0:
                                     dead(target)
-                                self.draw()
+                            self.draw()
                 elif playcard.name == "Savage Roar":
                     heroatk += 2
                     for i in range(len(fieldcard[self.me])):
